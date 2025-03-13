@@ -254,6 +254,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   actionButton: {
+    label:'white',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',

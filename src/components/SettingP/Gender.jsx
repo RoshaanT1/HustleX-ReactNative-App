@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 
-const Gender = ({ visible, onClose }) => {
+const Gender = ({ setGender ,visible, onClose }) => {
   const [selectedGender, setSelectedGender] = useState('');
 
   const handleGenderSelect = (gender) => {
@@ -17,6 +17,7 @@ const Gender = ({ visible, onClose }) => {
 
   const handleUpdate = () => {
     // Add your update logic here
+    setGender(selectedGender)
     onClose(); // Close the modal
   };
 
@@ -33,12 +34,12 @@ const Gender = ({ visible, onClose }) => {
 
           <TouchableOpacity
             style={styles.option}
-            onPress={() => handleGenderSelect('female')}
+            onPress={() => handleGenderSelect('Female')}
           >
             <View
               style={[
                 styles.radio,
-                selectedGender === 'female' && styles.selectedRadio,
+                selectedGender === 'Female' && styles.selectedRadio,
               ]}
             />
             <Text style={styles.optionText}>Female</Text>
@@ -46,12 +47,12 @@ const Gender = ({ visible, onClose }) => {
 
           <TouchableOpacity
             style={styles.option}
-            onPress={() => handleGenderSelect('male')}
+            onPress={() => handleGenderSelect('Male')}
           >
             <View
               style={[
                 styles.radio,
-                selectedGender === 'male' && styles.selectedRadio,
+                selectedGender === 'Male' && styles.selectedRadio,
               ]}
             />
             <Text style={styles.optionText}>Male</Text>
@@ -59,12 +60,12 @@ const Gender = ({ visible, onClose }) => {
 
           <TouchableOpacity
             style={styles.option}
-            onPress={() => handleGenderSelect('prefer_not_to_say')}
+            onPress={() => handleGenderSelect('Unspecified')}
           >
             <View
               style={[
                 styles.radio,
-                selectedGender === 'prefer_not_to_say' && styles.selectedRadio,
+                selectedGender === 'Unspecified' && styles.selectedRadio,
               ]}
             />
             <Text style={styles.optionText}>Prefer not to specify</Text>
@@ -88,7 +89,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     backgroundColor: 'white',
-    borderRadius: 20,
     padding: 20,
     alignItems: 'center',
     shadowColor: '#000',
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
     width: '100%',
-    height: Dimensions.get('window').height * 0.4,
+    height: Dimensions.get('window').height * 0.35,
   },
   title: {
     fontSize: 20,

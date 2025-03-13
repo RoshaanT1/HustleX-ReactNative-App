@@ -1,163 +1,202 @@
+import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
+import Gender from './SettingP/Gender';
 
-const Signup = ({navigation}) => {
-    const [mobileNumber, setMobileNumber] = useState('');
+const Signup = ({ navigation }) => {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confpassword, setConfPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const handleLogin = () => {
-        if(password === confpassword){
-            setError('');
-            console.log('Login with:', mobileNumber, password);
-            navigation.navigate('Main')
+    const [genderModalVisible, setGenderModalVisible] = useState(false);
+    const [age, setAge] = useState('')
+    const [gender, setGender] = useState('Unspecified')
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        return password.length >= 6; // Minimum 6 characters
+    };
+
+    const handleSignup = () => {
+        if (!validateEmail(email)) {
+            setError('Please enter a valid email address.');
+            return;
         }
-        else
-        setError('Passwords do not match')
+
+        if (!validatePassword(password)) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+
+        setError('');
+        console.log('Signup with:', email, password);
+        navigation.navigate('Main');
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Signup</Text>
+        <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            style={styles.container}
+        >
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <Text style={styles.title}>Sign Up</Text>
 
-            {/* <Text style={styles.label}>Phone Number</Text> */}
-            {/* <View style={styles.mobileInputContainer}>
-                <View style={styles.countryCodeContainer}>
-                <Text style={styles.countryCode}>+92</Text>
-                </View>
+                {/* Email Input */}
+                <Text style={styles.label}>Email</Text>
                 <TextInput
-                style={[styles.input, styles.mobileInput]}
-                placeholder="3331231231"
-                placeholderTextColor="#808080"
-                    keyboardType="phone-pad"
-                    value={mobileNumber}
-                    onChangeText={setMobileNumber}
-                    maxLength={10}
-                    />
-                    </View> */}
-            <Text style={styles.label}>Email</Text>
-            <View style={styles.mobileInputContainer}>
-                <TextInput
-                    style={[styles.input]}
-                    placeholder="User@gmail.com"
+                    style={[styles.input, error && !validateEmail(email) && styles.inputError]}
+                    placeholder="Enter your email"
                     placeholderTextColor="#808080"
-                    keyboardType="email"
-                    value={mobileNumber}
-                    onChangeText={setMobileNumber}
-                    maxLength={10}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
                 />
-            </View>
 
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#808080"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
 
-            <Text style={styles.label2}>Confirm Password</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Confirm Password"
-                placeholderTextColor="#808080"
-                secureTextEntry
-                value={confpassword}
-                onChangeText={setConfPassword}
-            />
 
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Signup</Text>
-            </TouchableOpacity>
+                {/* Password Input */}
+                <Text style={styles.label}>Age</Text>
+                <TextInput
+                    style={[styles.input, error && !validatePassword(password) && styles.inputError]}
+                    placeholder="25"
+                    placeholderTextColor="#808080"
+                    keyboardType="phone-pad"
+                    maxLength={3}
+                    value={age}
+                    onChangeText={setAge}
+                />
+                {/* Password Input */}
+                <Text style={styles.label}>Password</Text>
+                <TextInput
+                    style={[styles.input, error && !validatePassword(password) && styles.inputError]}
+                    placeholder="Enter your password"
+                    placeholderTextColor="#808080"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                />
 
-        </View>
+                {/* Confirm Password Input */}
+                <Text style={styles.label}>Confirm Password</Text>
+                <TextInput
+                    style={[styles.input, error && password !== confirmPassword && styles.inputError]}
+                    placeholder="Confirm your password"
+                    placeholderTextColor="#808080"
+                    secureTextEntry
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                />
+
+                {/* Error Message */}
+                {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+                {/* Gender Selection */}
+                <TouchableOpacity
+                    style={styles.genderContainer}
+                    onPress={() => setGenderModalVisible(true)}
+                >
+                    <View style={styles.iconContainer}>
+                        <MaterialIcons name="person" size={24} color="#000000" />
+                    </View>
+                    <View style={styles.textContainer}>
+                        <Text style={styles.genderLabel}>Gender</Text>
+                        <Text style={styles.genderValue}>{gender}</Text>
+                    </View>
+                    <MaterialIcons name="chevron-right" size={24} color="#808080" />
+                </TouchableOpacity>
+                <Gender setGender={setGender} visible={genderModalVisible} onClose={() => setGenderModalVisible(false)} />
+
+                {/* Signup Button */}
+                <TouchableOpacity style={styles.button} onPress={handleSignup}>
+                    <Text style={styles.buttonText}>Sign Up</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
         backgroundColor: '#FFFFFF',
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
         padding: 20,
     },
     title: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: 'bold',
         color: '#000000',
-        marginBottom: 30, 
+        marginBottom: 30,
+        textAlign: 'center',
     },
     label: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#000000',
-        margin: 5, 
-        alignSelf: 'flex-start', 
-    },
-    label2: {
-        fontSize: 14,
-        color: '#000000',
-        margin: 5, 
-        alignSelf: 'flex-start', 
-        marginTop:20
+        marginBottom: 10,
     },
     input: {
         width: '100%',
         backgroundColor: '#F2F2F2',
-        padding: Platform.OS === 'ios' ? 14 : 10, 
-        borderRadius: 5,
+        padding: 14,
+        borderRadius: 8,
         fontSize: 16,
         color: '#000000',
-        borderColor: '#D3D3D3',
         borderWidth: 1,
-
+        borderColor: '#D3D3D3',
+        marginBottom: 20,
     },
-    mobileInputContainer: {
+    inputError: {
+        borderColor: 'red',
+    },
+    genderContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        height: 45,
-        marginBottom: 15, 
-        borderColor: '#D3D3D3',
-        borderWidth: 1,
-        borderRadius: 5,
         backgroundColor: '#F2F2F2',
-    },
-    countryCodeContainer: {
-        paddingHorizontal: 8, 
-        borderRightWidth: 1,
+        padding: 14,
+        borderRadius: 8,
+        borderWidth: 1,
         borderColor: '#D3D3D3',
-        height: '100%',
-        justifyContent: 'center',
-        width: 50, 
+        marginBottom: 20,
     },
-    countryCode: {
-        fontSize: 14, 
-        color: '#000000',
-        textAlign: 'center',
+    iconContainer: {
+        marginRight: 16,
     },
-    mobileInput: {
+    textContainer: {
         flex: 1,
-        paddingVertical: 8, 
+    },
+    genderLabel: {
         fontSize: 16,
+        fontWeight: 'bold',
         color: '#000000',
-        paddingLeft: 8, 
+    },
+    genderValue: {
+        fontSize: 14,
+        color: '#808080',
     },
     button: {
         width: '100%',
         backgroundColor: '#000000',
-        padding: 14, 
-        borderRadius: 5,
+        padding: 16,
+        borderRadius: 8,
         alignItems: 'center',
         marginTop: 20,
-        bottom:'-5%'
     },
     buttonText: {
         color: '#FFFFFF',
-        fontSize: 18, 
+        fontSize: 18,
         fontWeight: 'bold',
     },
     errorText: {

@@ -88,9 +88,14 @@ const MenuRequest = ({ navigation }) => {
 
           <Button 
             mode="contained" 
-            onPress={() => console.log(formData)}
+            onPress={() => {
+              navigation.goBack();
+              console.log(formData);
+            }
+            }
             style={styles.submitButton}
-            color="#000"
+            textColor="white" 
+
           >
             Submit Request
           </Button>
@@ -146,7 +151,6 @@ const MenuRequest = ({ navigation }) => {
                 setMapVisible(false)
                 }
               }
-                color="#000"
               >
                 Confirm Location
               </Button>
@@ -229,6 +233,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: 'black',
     fontSize:20,
+
   },
   modalContainer: {
     flex: 1,

@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   },
   button: {
     alignSelf:'center',
-    bottom:-320,
+    bottom:"-170%",
     width:'90%',
     backgroundColor: 'black',
     padding: 15,

@@ -14,6 +14,7 @@ import Gender from './SettingP/Gender';
 
 const SettingPage = ({navigation}) => {
   const [genderVisible, setVisible] = useState(false)
+  const [gender, setGender] = useState('Unspecified')
   return (
     <View>
       <Text style={styles.headerText}>Account</Text>
@@ -51,15 +52,16 @@ const SettingPage = ({navigation}) => {
           </View>
           <MaterialIcons name="chevron-right" size={24} color="gray" />
         </TouchableOpacity>
+        
         <TouchableOpacity style={styles.container} onPress={()=>setVisible(true)}>
           <View style={styles.iconContainer}>
             <MaterialIcons name="person" size={24} color="black" />
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.name}>Gender</Text>
-            <Text style={styles.label}>Unspecified</Text>
+            <Text style={styles.label}>{gender}</Text>
           </View>
-        <Gender visible={genderVisible} onClose={()=>setVisible(false)}/>
+        <Gender setGender={setGender} visible={genderVisible} onClose={()=>setVisible(false)}/>
           <MaterialIcons name="chevron-right" size={24} color="gray" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.container} onPress={()=>navigation.navigate('DOB')}>
