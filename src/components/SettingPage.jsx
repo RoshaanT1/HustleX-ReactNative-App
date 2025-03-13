@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
 
   bottomComponent: {
     // bottom: -100,
-    bottom:-190,
+    bottom:"-78%",
     backgroundColor: 'lightblue',
     padding: 20,
     alignItems: 'center',

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
 
 
-const Menu = () => {
+const Menu = ({navigation}) => {
   const categories = [
     { name: 'Electric Service', image: require('../assets/electrician.png') },
     { name: 'Plumber Services', image: require('../assets/plumber.png') },
@@ -11,7 +11,7 @@ const Menu = () => {
     { name: 'Movers', image: require('../assets/delivery.png') },
     { name: 'Carpenter', image: require('../assets/carpenter.png') },
     { name: 'Other', image: require('../assets/plus.png') },
-    // { name: 'Pet Care', image: require('./assets/pet.png') },
+    { name: 'Pet Care', image: require('../assets/plus.png') },
     // { name: 'Deep Cleaning', image: require('./assets/deep.png') },
     // { name: 'Laundry & Dry...', image: require('./assets/laundry.png') },
     // { name: 'Beauty Salon', image: require('./assets/beauty.png') },
@@ -20,7 +20,7 @@ const Menu = () => {
     <View>
       <View style={styles.categoriesContainer}>
         {categories.map((category, index) => (
-          <TouchableOpacity key={index} style={styles.categoryButton}>
+          <TouchableOpacity key={index} style={styles.categoryButton} onPress={()=>navigation.navigate("Req")}>
             <Image source={category.image} style={styles.categoryImage} />
             <Text style={styles.categoryText}>{category.name}</Text>
           </TouchableOpacity>

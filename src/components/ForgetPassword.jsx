@@ -1,34 +1,19 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
 
-const LoginScreen = ({navigation}) => {
-    const [mobileNumber, setMobileNumber] = useState('');
-    const [password, setPassword] = useState('');
+const ForgotPassword = ({ navigation }) => {
+    const [email, setEmail] = useState('');
 
-    const handleLogin = () => {
-        console.log('Login with:', mobileNumber, password);
-        navigation.navigate('Main')
+    const handleForgotPassword = () => {
+        console.log('Forgot password for:', email);
+        // Implement logic to send reset password email or link
+        navigation.navigate('Login'); // Navigate back to login after sending reset link
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>HustleX</Text>
 
-            {/* <Text style={styles.label}>Phone Number</Text> */}
-            {/* <View style={styles.mobileInputContainer}>
-                <View style={styles.countryCodeContainer}>
-                <Text style={styles.countryCode}>+92</Text>
-                </View>
-                <TextInput
-                style={[styles.input, styles.mobileInput]}
-                placeholder="3331231231"
-                placeholderTextColor="#808080"
-                    keyboardType="phone-pad"
-                    value={mobileNumber}
-                    onChangeText={setMobileNumber}
-                    maxLength={10}
-                    />
-                    </View> */}
             <Text style={styles.label}>Email</Text>
             <View style={styles.mobileInputContainer}>
                 <TextInput
@@ -36,33 +21,22 @@ const LoginScreen = ({navigation}) => {
                     placeholder="User@gmail.com"
                     placeholderTextColor="#808080"
                     keyboardType="email"
-                    value={mobileNumber}
-                    onChangeText={setMobileNumber}
-                    maxLength={10}
+                    value={email}
+                    onChangeText={setEmail}
                 />
             </View>
 
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#808080"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
-
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
+            <TouchableOpacity style={styles.button} onPress={handleForgotPassword}>
+                <Text style={styles.buttonText}>Send Reset Link</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.forgotPasswordButton} onPress={()=> navigation.navigate("Password")}>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            <TouchableOpacity style={styles.backToLoginButton} onPress={()=>navigation.navigate('Login')}>
+                <Text style={styles.backToLoginText}>Back to Login</Text>
             </TouchableOpacity>
 
             <View style={styles.signupContainer}>
                 <Text style={styles.signupText}>Don't have an account? </Text>
-                <TouchableOpacity onPress={()=>navigation.navigate("Signup")}>
+                <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
                     <Text style={styles.signupLink}>Sign Up</Text>
                 </TouchableOpacity>
             </View>
@@ -93,7 +67,7 @@ const styles = StyleSheet.create({
     input: {
         width: '100%',
         backgroundColor: '#F2F2F2',
-        padding: Platform.OS === 'ios' ? 14 : 10, // Adjusted padding
+        padding: 11,
         borderRadius: 5,
         fontSize: 16,
         color: '#000000',
@@ -111,26 +85,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#F2F2F2',
     },
-    countryCodeContainer: {
-        paddingHorizontal: 8, // Further reduced padding
-        borderRightWidth: 1,
-        borderColor: '#D3D3D3',
-        height: '100%',
-        justifyContent: 'center',
-        width: 50, // Further reduced width
-    },
-    countryCode: {
-        fontSize: 14, // Further reduced font
-        color: '#000000',
-        textAlign: 'center',
-    },
-    mobileInput: {
-        flex: 1,
-        paddingVertical: 8, // Further adjusted padding
-        fontSize: 16,
-        color: '#000000',
-        paddingLeft: 8, // Further reduced padding
-    },
     button: {
         width: '100%',
         backgroundColor: '#000000',
@@ -144,10 +98,10 @@ const styles = StyleSheet.create({
         fontSize: 18, // Adjusted font
         fontWeight: 'bold',
     },
-    forgotPasswordButton: {
+    backToLoginButton: {
         marginTop: 20, // Adjusted margin
     },
-    forgotPasswordText: {
+    backToLoginText: {
         color: '#808080',
         fontSize: 14, // Adjusted font
     },
@@ -166,4 +120,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default ForgotPassword;

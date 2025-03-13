@@ -11,71 +11,96 @@ import UpdateEmail from '../components/SettingP/UpdateEmail'
 import DateOfBirth from '../components/SettingP/DateOfBirth'
 import Gender from '../components/SettingP/Gender'
 import NavigationBar from '../components/NavigationBar';
-// Create a stack navigator
+import Signup from '../components/Signup'
+import ForgotPassword from '../components/ForgetPassword';
+import Notification from '../components/Notification'
+import Order from '../components/Order'
+import OrderDetail from '../components/OrderDetail'
+import MenuRequest from '../components/MenuRequest'
 const Stack = createStackNavigator();
 
 const App = () => {
     return (
-      
-      <Stack.Navigator initialRouteName="Login">
-              {/* // <View> */}
-                {/* <Gender/> */}
-               {/* <Test/> */}
-              {/* <SettingPage/> */}
-              {/* <UpdateName/> */}
-              {/* <UpdateEmail/> */}
-              {/* <DateOfBirth/> */}
-              {/* </View> */}
-                {/* Login Screen */}
-                <Stack.Screen
-                    name="Login"
-                    component={LoginScreen}
-                    options={{ headerShown: false }} 
-                />
-                {/* Main Screen */}
-                <Stack.Screen
-                    name="Main"
-                    component={MainScreen}
-                    options={{  headerShown: false }} 
-                />
-                <Stack.Screen
-                    name="Setting"
-                    component={SettingPage}
-                    options={{  headerShown: false }} 
-                />
 
-                <Stack.Screen
-                    name="Navigation"
-                    component={NavigationBar}
-                    options={{  headerShown: false }} 
-                />
+        <Stack.Navigator initialRouteName="Login">
 
-                <Stack.Screen
-                    name="Name"
-                    component={UpdateName}
-                    options={{  headerShown: false }} 
-                />
+            <Stack.Screen
+                name="Notification"
+                component={Notification}
+                options={{ headerShown: false }}
+            />
 
-                <Stack.Screen
-                    name="Email"
-                    component={UpdateEmail}
-                    options={{  headerShown: false }} 
-                />
+            <Stack.Screen
+                name="OrderDetail"
+                component={OrderDetail}
+                options={{ headerShown: false }}
+            />
 
-                <Stack.Screen
-                    name="DOB"
-                    component={DateOfBirth}
-                    options={{  headerShown: false }} 
-                />
+            <Stack.Screen
+                name="Order"
+                component={Order}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Signup"
+                component={Signup}
+                options={{ headerShown: false }}
+            />
 
-                <Stack.Screen
-                    name="Gender"
-                    component={Gender}
-                    options={{  headerShown: false }} 
-                />
-            </Stack.Navigator>
+            <Stack.Screen
+                name="Password"
+                component={ForgotPassword}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Login"
+                component={LoginScreen}
+                options={{ headerShown: false }}
+            />
+            {/* Main Screen */}
+            <Stack.Screen
+                name="Main"
+                component={MainScreen}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="Setting"
+                component={SettingPage}
+                options={{ headerShown: false }}
+            />
 
-    );
+            <Stack.Screen
+                name="Navigation"
+                component={NavigationBar}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="Name"
+                component={UpdateName}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="Email"
+                component={UpdateEmail}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="DOB"
+                component={DateOfBirth}
+                options={{ headerShown: false }}
+            />
+
+<Stack.Screen
+    name="Req"
+    component={MenuRequest}
+    options={{ headerShown: false }}
+/>
+        </Stack.Navigator>
+
+);
 };
 
 export default App;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons'; // Make sure you have this installed: `expo install @expo/vector-icons`
 
-const CategoryHeader = () => {
+const Searchbar = () => {
     const [search, setSearch] = useState('')
   return (
     <View style={styles.container}>
@@ -58,4 +58,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryHeader;
+export default Searchbar;

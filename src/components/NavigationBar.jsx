@@ -14,7 +14,7 @@ const NavigationBar = ( {navigation} ) => {
                 <Image source={home} style={styles.icon} />
                 <Text style={styles.text}>Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.item}>
+            <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('Notification')}>
                 <Image source={notification} style={styles.icon} />
                 <Text style={styles.text}>Notification</Text>
             </TouchableOpacity>
@@ -32,7 +32,7 @@ const NavigationBar = ( {navigation} ) => {
             {/* Invisible Spacer to Maintain Even Spacing */}
             <View style={styles.spacer} />
 
-            <TouchableOpacity style={styles.item}>
+            <TouchableOpacity style={styles.item} onPress={()=>navigation.navigate('Order')}>
                 <Image source={order} style={styles.icon} />
                 <Text style={styles.text}>My Orders</Text>
             </TouchableOpacity>

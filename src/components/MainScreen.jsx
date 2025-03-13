@@ -10,7 +10,7 @@ const MainScreen = ({navigation}) => {
  
      <View style={styles.container}>
       <SearchBar/>
-      <Menu/>
+      <Menu navigation={navigation}/>
       <NavigationBar navigation={navigation}/>
     </View>
  

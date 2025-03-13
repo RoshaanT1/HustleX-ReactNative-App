@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform } from 'react-native';
 
-const LoginScreen = ({navigation}) => {
+const Signup = ({navigation}) => {
     const [mobileNumber, setMobileNumber] = useState('');
     const [password, setPassword] = useState('');
-
+    const [confpassword, setConfPassword] = useState('');
+    const [error, setError] = useState('');
     const handleLogin = () => {
-        console.log('Login with:', mobileNumber, password);
-        navigation.navigate('Main')
+        if(password === confpassword){
+            setError('');
+            console.log('Login with:', mobileNumber, password);
+            navigation.navigate('Main')
+        }
+        else
+        setError('Passwords do not match')
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>HustleX</Text>
+            <Text style={styles.title}>Signup</Text>
 
             {/* <Text style={styles.label}>Phone Number</Text> */}
             {/* <View style={styles.mobileInputContainer}>
@@ -52,20 +58,21 @@ const LoginScreen = ({navigation}) => {
                 onChangeText={setPassword}
             />
 
+            <Text style={styles.label2}>Confirm Password</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Confirm Password"
+                placeholderTextColor="#808080"
+                secureTextEntry
+                value={confpassword}
+                onChangeText={setConfPassword}
+            />
+
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
+                <Text style={styles.buttonText}>Signup</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.forgotPasswordButton} onPress={()=> navigation.navigate("Password")}>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
-
-            <View style={styles.signupContainer}>
-                <Text style={styles.signupText}>Don't have an account? </Text>
-                <TouchableOpacity onPress={()=>navigation.navigate("Signup")}>
-                    <Text style={styles.signupLink}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
         </View>
     );
 };
@@ -82,88 +89,83 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         color: '#000000',
-        marginBottom: 30, // Adjusted margin
+        marginBottom: 30, 
     },
     label: {
         fontSize: 14,
         color: '#000000',
-        marginBottom: 5, // Spacing between label and input
-        alignSelf: 'flex-start', // Align label to the left
+        margin: 5, 
+        alignSelf: 'flex-start', 
+    },
+    label2: {
+        fontSize: 14,
+        color: '#000000',
+        margin: 5, 
+        alignSelf: 'flex-start', 
+        marginTop:20
     },
     input: {
         width: '100%',
         backgroundColor: '#F2F2F2',
-        padding: Platform.OS === 'ios' ? 14 : 10, // Adjusted padding
+        padding: Platform.OS === 'ios' ? 14 : 10, 
         borderRadius: 5,
         fontSize: 16,
         color: '#000000',
         borderColor: '#D3D3D3',
         borderWidth: 1,
+
     },
     mobileInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        height: 45, // Further reduced height
-        marginBottom: 15, // Adjusted margin
+        height: 45,
+        marginBottom: 15, 
         borderColor: '#D3D3D3',
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: '#F2F2F2',
     },
     countryCodeContainer: {
-        paddingHorizontal: 8, // Further reduced padding
+        paddingHorizontal: 8, 
         borderRightWidth: 1,
         borderColor: '#D3D3D3',
         height: '100%',
         justifyContent: 'center',
-        width: 50, // Further reduced width
+        width: 50, 
     },
     countryCode: {
-        fontSize: 14, // Further reduced font
+        fontSize: 14, 
         color: '#000000',
         textAlign: 'center',
     },
     mobileInput: {
         flex: 1,
-        paddingVertical: 8, // Further adjusted padding
+        paddingVertical: 8, 
         fontSize: 16,
         color: '#000000',
-        paddingLeft: 8, // Further reduced padding
+        paddingLeft: 8, 
     },
     button: {
         width: '100%',
         backgroundColor: '#000000',
-        padding: 14, // Adjusted padding
+        padding: 14, 
         borderRadius: 5,
         alignItems: 'center',
         marginTop: 20,
+        bottom:'-5%'
     },
     buttonText: {
         color: '#FFFFFF',
-        fontSize: 18, // Adjusted font
+        fontSize: 18, 
         fontWeight: 'bold',
     },
-    forgotPasswordButton: {
-        marginTop: 20, // Adjusted margin
-    },
-    forgotPasswordText: {
-        color: '#808080',
-        fontSize: 14, // Adjusted font
-    },
-    signupContainer: {
-        flexDirection: 'row',
-        marginTop: 25, // Adjusted margin
-    },
-    signupText: {
-        fontSize: 14, // Adjusted font
-        color: '#000000',
-    },
-    signupLink: {
-        fontSize: 14, // Adjusted font
-        color: '#000000',
-        fontWeight: 'bold',
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 10,
+        alignSelf: 'flex-start',
     },
 });
 
-export default LoginScreen;
+export default Signup;
