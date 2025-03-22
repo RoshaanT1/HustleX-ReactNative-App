@@ -3,16 +3,42 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 import Gender from './SettingP/Gender';
 
-const Signup = ({ navigation }) => {
-
+const Signup2 = ({ navigation }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [genderModalVisible, setGenderModalVisible] = useState(false);
     const [age, setAge] = useState('')
     const [gender, setGender] = useState('Unspecified')
-    const [name, setName] = useState('')
- 
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
+
+    const validatePassword = (password) => {
+        return password.length >= 6; // Minimum 6 characters
+    };
+
     const handleSignup = () => {
-        navigation.navigate('Signup2');
+        if (!validateEmail(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            setError('Password must be at least 6 characters long.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+
+        setError('');
+        console.log('Signup with:', email, password);
+        navigation.navigate('Main');
     };
 
     return (
@@ -23,50 +49,59 @@ const Signup = ({ navigation }) => {
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <Text style={styles.title}>Sign Up</Text>
 
-
-
-                <Text style={styles.label}>Name</Text>
+                {/* Email Input */}
+                <Text style={styles.label}>Email</Text>
                 <TextInput
-                    style={[styles.input, error && !validatePassword(password) && styles.inputError]}
-                    placeholder="Roshaan Tahir"
+                    style={[styles.input, error && !validateEmail(email) && styles.inputError]}
+                    placeholder="Enter your email"
                     placeholderTextColor="#808080"
-                    keyboardType="ascii-capable"
-                    value={name}
-                    onChangeText={setName}
+                    keyboardType="email-address"
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
                 />
 
+
+
+                {/* Password Input */}
+                {/* <Text style={styles.label}>Age</Text>
+                <TextInput
+                    style={[styles.input, error && !validatePassword(password) && styles.inputError]}
+                    placeholder="25"
+                    placeholderTextColor="#808080"
+                    keyboardType="phone-pad"
+                    maxLength={3}
+                    value={age}
+                    onChangeText={setAge}
+                /> */}
+                {/* Password Input */}
+                <Text style={styles.label}>Password</Text>
+                <TextInput
+                    style={[styles.input, error && !validatePassword(password) && styles.inputError]}
+                    placeholder="Enter your password"
+                    placeholderTextColor="#808080"
+                    secureTextEntry
+                    value={password}
+                    onChangeText={setPassword}
+                />
+
+                {/* Confirm Password Input */}
+                <Text style={styles.label}>Confirm Password</Text>
+                <TextInput
+                    style={[styles.input, error && password !== confirmPassword && styles.inputError]}
+                    placeholder="Confirm your password"
+                    placeholderTextColor="#808080"
+                    secureTextEntry
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                />
 
                 {/* Error Message */}
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                {/* Gender Selection */}
-                <TouchableOpacity
-                    style={styles.Container2}
-                    onPress={() => setGenderModalVisible(true)}
-                >
-                    <View style={styles.iconContainer}>
-                        <MaterialIcons name="person" size={24} color="#000000" />
-                    </View>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.Label2}>Gender</Text>
-                        <Text style={styles.genderValue}>{gender}</Text>
-                    </View>
-                    <MaterialIcons name="chevron-right" size={24} color="#808080" />
-                </TouchableOpacity>
-                <Gender setGender={setGender} visible={genderModalVisible} onClose={() => setGenderModalVisible(false)} />
-
-                <TouchableOpacity style={styles.Container2} onPress={() => navigation.navigate('DOB')}>
-                    <View style={styles.iconContainer}>
-                        <MaterialIcons name="calendar-today" size={24} color="black" />
-                    </View>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.Label2}>Date of Birth</Text>
-                    </View>
-                    <MaterialIcons name="chevron-right" size={24} color="gray" />
-                </TouchableOpacity>
-
+                {/* Signup Button */}
                 <TouchableOpacity style={styles.button} onPress={handleSignup}>
-                    <Text style={styles.buttonText}>Next</Text>
+                    <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -109,7 +144,7 @@ const styles = StyleSheet.create({
     inputError: {
         borderColor: 'red',
     },
-    Container2: {
+    genderContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
@@ -126,7 +161,7 @@ const styles = StyleSheet.create({
     textContainer: {
         flex: 1,
     },
-    Label2: {
+    genderLabel: {
         fontSize: 16,
         fontWeight: 'bold',
         color: '#000000',
@@ -154,22 +189,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         alignSelf: 'flex-start',
     },
-    container2: {
-        width: '90%',
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        elevation: 5
-      },
-      iconContainer2: {
-        marginRight: 16,
-      },
-      textContainer2: {
-        flex: 1,
-      },
 });
 
-export default Signup;
+export default Signup2;

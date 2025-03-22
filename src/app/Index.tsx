@@ -17,6 +17,7 @@ import Notification from '../components/Notification'
 import Order from '../components/Order'
 import OrderDetail from '../components/OrderDetail'
 import MenuRequest from '../components/MenuRequest'
+import Signup2 from '../components/Signup2';
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -44,6 +45,12 @@ const App = () => {
             <Stack.Screen
                 name="Signup"
                 component={Signup}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="Signup2"
+                component={Signup2}
                 options={{ headerShown: false }}
             />
 
