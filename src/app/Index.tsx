@@ -18,12 +18,13 @@ import Order from '../components/Order'
 import OrderDetail from '../components/OrderDetail'
 import MenuRequest from '../components/MenuRequest'
 import Signup2 from '../components/Signup2';
+import FirstScreen from '../components/FirstScreen'
 const Stack = createStackNavigator();
 
 const App = () => {
     return (
 
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="FirstScreen">
 
             <Stack.Screen
                 name="Notification"
@@ -51,6 +52,12 @@ const App = () => {
             <Stack.Screen
                 name="Signup2"
                 component={Signup2}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="FirstScreen"
+                component={FirstScreen}
                 options={{ headerShown: false }}
             />
 
