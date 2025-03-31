@@ -1,0 +1,184 @@
+-------------INFO--------------------
+
+////////////////////////////DATABASE
+
+Table Users {
+  user_id int [pk]
+  full_name varchar
+  cnic varchar
+  email varchar
+  phone_number varchar
+  password varchar
+  address varchar
+  city varchar
+  registration_date date
+  requests_num int
+}
+
+Table Service_Providers {
+  worker_id int [pk]
+  full_name varchar
+  cnic varchar
+  email varchar
+  phone_number varchar
+  password varchar
+  address varchar
+  city varchar
+  service_type_id int [ref: > Services.service_id]
+  experience_years int
+  availability_status varchar
+  rating float
+  registration_date date
+  Num_Successful_works int
+}
+
+Table Services {
+  service_id int [pk]
+  service_name varchar
+  description varchar
+}
+
+Table Bookings {
+  booking_id int [pk]
+  user_id int [ref: > Users.user_id]
+  worker_id int [ref: > Service_Providers.worker_id]
+  service_id int [ref: > Services.service_id]
+  booking_date date
+  time_slot varchar
+  status varchar
+  total_price float
+}
+
+Table Reviews_Ratings {
+  review_id int [pk]
+  user_id int [ref: > Users.user_id]
+  worker_id int [ref: > Service_Providers.worker_id]
+  rating int
+  review_text text
+  review_date date
+}
+
+Table Payments {
+  payment_id int [pk]
+  booking_id int [ref: > Bookings.booking_id]
+  user_id int [ref: > Users.user_id]
+  worker_id int [ref: > Service_Providers.worker_id]
+  amount_paid float
+  payment_method varchar
+  payment_status varchar
+  payment_date date
+}
+
+Table Worker_Portfolio {
+  portfolio_id int [pk]
+  worker_id int [ref: > Service_Providers.worker_id]
+  image_url varchar
+  description text
+  upload_date date
+  Num_Successful_works int
+}
+
+
+
+
+/////////////////////SSMS
+user: 'sa',
+password: 'MySecure@123', // Use the password you set in SSMS
+server: 'DESKTOP-69H2STN\\SQLEXPRESS',
+database: 'semester_project',
+authentication= windows authentication
+server authentication= sql server and windows authentication mode
+
+
+
+
+const { connectDB, sql } = require("./db");
+
+async function testConnection() {
+    let pool = await connectDB();
+    let result = await pool.request().query("SELECT * FROM Users");
+    console.log(result.reccordset);
+}
+
+testConnection();
+
+
+
+const sql = require("mssql");
+
+const config = {
+    user: 'sa',
+    password: 'MySecure@123', // Use the password you set in SSMS
+    server: 'DESKTOP-69H2STN\\SQLEXPRESS',
+    database: 'semester_project',
+    options: {
+        trustServerCertificate: true,
+        encrypt: false // Set false to avoid encryption issues
+    }
+};
+
+async function connectAndQuery() {
+    try {
+        let pool = await sql.connect(config);
+        let result = await pool.request().query("SELECT * FROM Users");
+        console.log("✅ Users List:", result.recordset);
+    } catch (err) {
+        console.error("❌ Database connection failed:", err);
+    }
+}
+
+connectAndQuery();
+////////////////////////////////final db connection
+const sql = require("mssql");
+
+const config = {
+    user: 'sa',
+    password: 'MySecure@123', // Use your actual password
+    server: 'DESKTOP-69H2STN\\SQLEXPRESS',
+    database: 'semester_project',
+    options: {
+        trustServerCertificate: true,
+        encrypt: false
+    }
+};
+
+async function checkDBConnection() {
+    try {
+        let pool = await sql.connect(config);
+        console.log("✅ Database connection successful.");
+        await pool.close(); // Close the connection after checking
+    } catch (err) {
+        console.error("❌ Database connection failed:", err);
+    }
+}
+
+checkDBConnection();
+
+
+//////////////////////////////////////////////////
+
+import validator from "validator";
+import bcrypt from "bcrypt";
+import streamifier  from 'streamifier';
+import jwt from "jsonwebtoken";
+import {v2 as cloudinary} from "cloudinary";
+import Stripe from 'stripe';
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+import moment from "moment";
+import "dotenv/config"
+import cors from "cors"
+import multer from "multer";
+
+ "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.30.1",
+    "mongoose": "^8.10.1",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "streamifier": "^0.1.1",
+    "stripe": "^17.6.0",
+    "validator": "^13.12.0"
