@@ -1,46 +1,105 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { 
+  View, 
+  StyleSheet, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  Platform, 
+  KeyboardAvoidingView, 
+  ScrollView,
+  ActivityIndicator,
+  Alert
+} from 'react-native';
 import Gender from './SettingP/Gender';
+import { useStore } from '../store/Store';
 
 const Signup2 = ({ navigation }) => {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const [genderModalVisible, setGenderModalVisible] = useState(false);
-    const [age, setAge] = useState('')
-    const [gender, setGender] = useState('Unspecified')
+    const { password, setPassword } = useStore();
+    const { age, setAge } = useStore();
+    const { gender, setGender } = useStore();
+    const { name, setName } = useStore();
+    const [isLoading, setIsLoading] = useState(false);
+    const { phoneNumber, setPhoneNumber } = useStore();
+    const { city, setCity } = useStore();
+
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     };
 
     const validatePassword = (password) => {
-        return password.length >= 6; // Minimum 6 characters
+        return password.length >= 6;
     };
 
-    const handleSignup = () => {
+    const handleSignup = async () => {
+        // Validate inputs
         if (!validateEmail(email)) {
             setError('Please enter a valid email address.');
             return;
         }
-
+    
         if (!validatePassword(password)) {
             setError('Password must be at least 6 characters long.');
             return;
         }
-
+    
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
-
+    
+        if (!name) {
+            setError('Please enter your full name.');
+            return;
+        }
+    
         setError('');
-        console.log('Signup with:', email, password);
-        navigation.navigate('Main');
+        setIsLoading(true);
+    
+        try {
+            // Prepare request body to exactly match Postman format
+            const requestBody = {
+                email: email,
+                password: password,
+                confirmPassword: password, // Send the actual confirmation
+                age: age ? parseInt(age) : null, // Ensure age is number or null
+                gender: gender,
+                phone_number: phoneNumber,
+                full_name: name,
+                city: city,
+                address: "" // Default address if not specified
+            };
+    
+            console.log("Sending:", requestBody); // For debugging
+    
+            const response = await fetch('https://02bd-202-47-41-20.ngrok-free.app/api/signup/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+    
+            const data = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.message || 'Signup failed');
+            }
+    
+            Alert.alert('Success', 'Account created successfully!');
+            navigation.navigate('Main');
+        } catch (error) {
+            console.error('Signup error:', error);
+            Alert.alert('Error', error.message || 'Signup failed. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
-
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -61,19 +120,6 @@ const Signup2 = ({ navigation }) => {
                     autoCapitalize="none"
                 />
 
-
-
-                {/* Password Input */}
-                {/* <Text style={styles.label}>Age</Text>
-                <TextInput
-                    style={[styles.input, error && !validatePassword(password) && styles.inputError]}
-                    placeholder="25"
-                    placeholderTextColor="#808080"
-                    keyboardType="phone-pad"
-                    maxLength={3}
-                    value={age}
-                    onChangeText={setAge}
-                /> */}
                 {/* Password Input */}
                 <Text style={styles.label}>Password</Text>
                 <TextInput
@@ -100,8 +146,16 @@ const Signup2 = ({ navigation }) => {
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                 {/* Signup Button */}
-                <TouchableOpacity style={styles.button} onPress={handleSignup}>
-                    <Text style={styles.buttonText}>Sign Up</Text>
+                <TouchableOpacity 
+                    style={styles.button} 
+                    onPress={handleSignup}
+                    disabled={isLoading}
+                >
+                    {isLoading ? (
+                        <ActivityIndicator color="#FFFFFF" />
+                    ) : (
+                        <Text style={styles.buttonText}>Sign Up</Text>
+                    )}
                 </TouchableOpacity>
             </ScrollView>
         </KeyboardAvoidingView>
