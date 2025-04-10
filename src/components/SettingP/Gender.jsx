@@ -1,3 +1,4 @@
+import { useStore } from '@/src/store/Store';
 import React, { useState } from 'react';
 import {
   View,
@@ -7,16 +8,42 @@ import {
   Modal,
   Dimensions,
 } from 'react-native';
+import { API_URL } from '../config';
+import { ActivityIndicator } from 'react-native-paper';
 
-const Gender = ({ setGender ,visible, onClose }) => {
+const Gender = ({ setGender, visible, onClose }) => {
   const [selectedGender, setSelectedGender] = useState('');
+  const { token } = useStore();
+  const { userId } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGenderSelect = (gender) => {
     setSelectedGender(gender);
   };
 
-  const handleUpdate = () => {
-    // Add your update logic here
+  const handleUpdate = async () => {
+    if (userId != 0) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/api/update-gender/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: userId,
+            gender: selectedGender,
+          }),
+        });
+
+      } catch (error) {
+        console.error('Login error:', error);
+        Alert.alert('Error', error.message || 'Network error. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
     setGender(selectedGender)
     onClose(); // Close the modal
   };
@@ -71,9 +98,12 @@ const Gender = ({ setGender ,visible, onClose }) => {
             <Text style={styles.optionText}>Prefer not to specify</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
-            <Text style={styles.updateButtonText}>Update</Text>
-          </TouchableOpacity>
+          {isLoading ? (
+            <ActivityIndicator style={styles.loader} color="#000000" size="large" />
+          ) : (
+            <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
+              <Text style={styles.updateButtonText}>Update</Text>
+            </TouchableOpacity>)}
         </View>
       </View>
     </Modal>

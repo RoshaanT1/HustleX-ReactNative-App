@@ -12,10 +12,10 @@ const FirstScreen = ({navigation}) => {
         <Text style={styles.title}>Hustle X</Text>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Signup")}>
+          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Login")}>
             <Text style={styles.buttonText}>User</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Signup")}>
+          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Login")}>
             <Text style={styles.buttonText}>Hustler</Text>
           </TouchableOpacity>
         </View>

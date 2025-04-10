@@ -8,11 +8,16 @@ import {
 import { MaterialIcons } from '@expo/vector-icons';
 import NavigationBar from './NavigationBar';
 import Gender from './SettingP/Gender';
+import { useStore } from '../store/Store';
 
 const SettingPage = ({ navigation }) => {
   const [genderVisible, setVisible] = useState(false);
-  const [gender, setGender] = useState('Unspecified');
-
+  const { age, setAge } = useStore();
+  const { gender, setGender } = useStore();
+  const { name, setName } = useStore();
+  const { city, setCity } = useStore();
+  const { email, setEmail } = useStore();
+  
   return (
     <View style={styles.mainContainer}>
       <View style={styles.container}>
@@ -20,46 +25,69 @@ const SettingPage = ({ navigation }) => {
         <View style={styles.settingsContainer}>
           <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('Name')}>
             <View style={styles.iconContainer}>
-              <MaterialIcons name="person" size={24} color="#4A4A4A" />
+              <MaterialIcons name="person" size={24} color="#000000" />
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.settingName}>Name</Text>
-              <Text style={styles.settingLabel}>Roshaan Tahir</Text>
+              <Text style={styles.settingLabel}>{name}</Text>
             </View>
-            <MaterialIcons name="chevron-right" size={24} color="#B0B0B0" />
+            <MaterialIcons name="chevron-right" size={24} color="#000000" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('Email')}>
             <View style={styles.iconContainer}>
-              <MaterialIcons name="email" size={24} color="#4A4A4A" />
+              <MaterialIcons name="email" size={24} color="#000000" />
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.settingName}>Email</Text>
-              <Text style={styles.settingLabel}>R@gmail.com</Text>
+              <Text style={styles.settingLabel}>{email}</Text>
             </View>
-            <MaterialIcons name="chevron-right" size={24} color="#B0B0B0" />
+            <MaterialIcons name="chevron-right" size={24} color="#000000" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('Password')}>
+            <View style={styles.iconContainer}>
+              <MaterialIcons name="lock" size={24} color="#000000" />
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.settingName}>Password</Text>
+              <Text style={styles.settingLabel}>••••••••</Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={24} color="#000000" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.settingItem} onPress={() => setVisible(true)}>
             <View style={styles.iconContainer}>
-              <MaterialIcons name="person" size={24} color="#4A4A4A" />
+              <MaterialIcons name="person" size={24} color="#000000" />
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.settingName}>Gender</Text>
               <Text style={styles.settingLabel}>{gender}</Text>
             </View>
             <Gender setGender={setGender} visible={genderVisible} onClose={() => setVisible(false)} />
-            <MaterialIcons name="chevron-right" size={24} color="#B0B0B0" />
+            <MaterialIcons name="chevron-right" size={24} color="#000000" />
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.settingItem, styles.dobItem]} onPress={() => navigation.navigate('DOB')}>
             <View style={styles.iconContainer}>
-              <MaterialIcons name="calendar-today" size={24} color="#4A4A4A" />
+              <MaterialIcons name="calendar-today" size={24} color="#000000" />
             </View>
             <View style={styles.textContainer}>
               <Text style={styles.settingName}>Date of Birth</Text>
+              <Text style={styles.settingLabel}>{age ? `${age} years old` : ''}</Text>
             </View>
-            <MaterialIcons name="chevron-right" size={24} color="#B0B0B0" />
+            <MaterialIcons name="chevron-right" size={24} color="#000000" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.settingItem} onPress={() => navigation.navigate('City')}>
+            <View style={styles.iconContainer}>
+              <MaterialIcons name="location-city" size={24} color="#000000" />
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.settingName}>City</Text>
+              <Text style={styles.settingLabel}>{city}</Text>
+            </View>
+            <MaterialIcons name="chevron-right" size={24} color="#000000" />
           </TouchableOpacity>
         </View>
       </View>
@@ -86,7 +114,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    color: '#000000',
   },
   settingsContainer: {
     marginTop: 10,
@@ -121,16 +149,16 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#000000',
     marginTop: 2,
   },
   settingName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#000000',
   },
   bottomComponent: {
-    bottom:-5,
+    bottom: -5,
     paddingVertical: 20,
     alignItems: 'center',
     backgroundColor: '#E3F2FD',

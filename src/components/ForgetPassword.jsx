@@ -1,47 +1,74 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { API_URL } from './config';
+import { useStore } from '../store/Store';
 
 const ForgotPassword = ({ navigation }) => {
     const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const {resetToken, setResetToken} = useStore();
 
-    const handleForgotPassword = () => {
+    const handleForgotPassword = async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/api/reset-password/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                }),
+            });
+            const data = await response.json();
+            setResetToken(data.resetCode)
+        } catch (error) {
+            console.error('Login error:', error);
+            Alert.alert('Error', error.message || 'Network error. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
         console.log('Forgot password for:', email);
-        // Implement logic to send reset password email or link
         navigation.navigate('Login'); // Navigate back to login after sending reset link
-    };
+    }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>HustleX</Text>
+return (
+    <View style={styles.container}>
+        <Text style={styles.title}>HustleX</Text>
 
-            <Text style={styles.label}>Email</Text>
-            <View style={styles.mobileInputContainer}>
-                <TextInput
-                    style={[styles.input]}
-                    placeholder="User@gmail.com"
-                    placeholderTextColor="#808080"
-                    keyboardType="email"
-                    value={email}
-                    onChangeText={setEmail}
-                />
-            </View>
+        <Text style={styles.label}>Email</Text>
+        <View style={styles.mobileInputContainer}>
+            <TextInput
+                style={[styles.input]}
+                placeholder="User@gmail.com"
+                placeholderTextColor="#808080"
+                keyboardType="email"
+                value={email}
+                onChangeText={setEmail}
+            />
+        </View>
 
+        {isLoading ? (
+            <ActivityIndicator style={styles.loader} color="#000000" size="large" />
+        ) : (
             <TouchableOpacity style={styles.button} onPress={handleForgotPassword}>
                 <Text style={styles.buttonText}>Send Reset Link</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>)
+        }
 
-            <TouchableOpacity style={styles.backToLoginButton} onPress={()=>navigation.navigate('Login')}>
-                <Text style={styles.backToLoginText}>Back to Login</Text>
-            </TouchableOpacity>
+        <TouchableOpacity style={styles.backToLoginButton} onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.backToLoginText}>Back to Login</Text>
+        </TouchableOpacity>
 
-            <View style={styles.signupContainer}>
-                <Text style={styles.signupText}>Don't have an account? </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-                    <Text style={styles.signupLink}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
+        <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+                <Text style={styles.signupLink}>Sign Up</Text>
+            </TouchableOpacity>
         </View>
-    );
+    </View>
+);
 };
 
 const styles = StyleSheet.create({

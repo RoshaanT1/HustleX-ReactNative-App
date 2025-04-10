@@ -1,169 +1,213 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Platform } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Platform,
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView
+} from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
+import { API_URL } from './config'
+import { useStore } from '../store/Store';
 
-const LoginScreen = ({navigation}) => {
-    const [mobileNumber, setMobileNumber] = useState('');
-    const [password, setPassword] = useState('');
+const LoginScreen = ({ navigation }) => {
+  const [numberEmail, setNumberEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { password, setPassword } = useStore();
+  const { age, setAge } = useStore();
+  const { gender, setGender } = useStore();
+  const { name, setName } = useStore();
+  const { phoneNumber, setPhoneNumber } = useStore();
+  const { city, setCity } = useStore();
+  const { email, setEmail } = useStore();
+  const { userId, setUserId } = useStore();
+  const { token, setToken } = useStore();
 
-    const handleLogin = () => {
-        console.log('Login with:', mobileNumber, password);
-        navigation.navigate('Main')
-    };
+  const handleLogin = async () => {
+    // Input validation
+    if (!numberEmail.trim()) {
+      Alert.alert('Error', 'Please enter your email or phone number');
+      return;
+    }
+    if (!password.trim()) {
+      Alert.alert('Error', 'Please enter your password');
+      return;
+    }
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>HustleX</Text>
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          emailOrPhone: numberEmail,
+          password: password,
+        }),
+      });
+      setPassword('')
+      const data = await response.json();
+      console.log(data);
 
-            {/* <Text style={styles.label}>Phone Number</Text> */}
-            {/* <View style={styles.mobileInputContainer}>
-                <View style={styles.countryCodeContainer}>
-                <Text style={styles.countryCode}>+92</Text>
-                </View>
-                <TextInput
-                style={[styles.input, styles.mobileInput]}
-                placeholder="3331231231"
-                placeholderTextColor="#808080"
-                    keyboardType="phone-pad"
-                    value={mobileNumber}
-                    onChangeText={setMobileNumber}
-                    maxLength={10}
-                    />
-                    </View> */}
-            <Text style={styles.label}>Email</Text>
-            <View style={styles.mobileInputContainer}>
-                <TextInput
-                    style={[styles.input]}
-                    placeholder="User@gmail.com"
-                    placeholderTextColor="#808080"
-                    keyboardType="email"
-                    value={mobileNumber}
-                    onChangeText={setMobileNumber}
-                    maxLength={10}
-                />
-            </View>
+      setName(data.user?.full_name);
+      setCity(data.user?.city);
+      setGender(data.user?.gender);
+      setPhoneNumber(data.user?.phone_number);
+      setAge(data.user?.age);
+      setUserId(data.user?.user_id);
+      setEmail(data.user?.email);
+      setToken(data.token)
 
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                placeholderTextColor="#808080"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed. Please try again.');
+      }
+      
+      // Successful login
+      console.log(name, age, email, phoneNumber, city, age, userId, gender, token);
+      navigation.navigate('Main');
+    } catch (error) {
+      console.error('Login error:', error);
+      Alert.alert('Error', error.message || 'Network error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
+  return (
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.title}>HustleX</Text>
 
-            <TouchableOpacity style={styles.forgotPasswordButton} onPress={()=> navigation.navigate("Password")}>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-            </TouchableOpacity>
+        <Text style={styles.label}>Email or Phone Number</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="user@example.com or 3331231231"
+          placeholderTextColor="#808080"
+          value={numberEmail}
+          onChangeText={setNumberEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
 
-            <View style={styles.signupContainer}>
-                <Text style={styles.signupText}>Don't have an account? </Text>
-                <TouchableOpacity onPress={()=>navigation.navigate("Signup")}>
-                    <Text style={styles.signupLink}>Sign Up</Text>
-                </TouchableOpacity>
-            </View>
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#808080"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        {isLoading ? (
+          <ActivityIndicator style={styles.loader} color="#000000" size="large" />
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          style={styles.forgotPasswordButton}
+          onPress={() => navigation.navigate('Password')}
+        >
+          <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+        </TouchableOpacity>
+
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signupLink}>Sign Up</Text>
+          </TouchableOpacity>
         </View>
-    );
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        padding: 20,
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#000000',
-        marginBottom: 30, // Adjusted margin
-    },
-    label: {
-        fontSize: 14,
-        color: '#000000',
-        marginBottom: 5, // Spacing between label and input
-        alignSelf: 'flex-start', // Align label to the left
-    },
-    input: {
-        width: '100%',
-        backgroundColor: '#F2F2F2',
-        padding: Platform.OS === 'ios' ? 14 : 10, // Adjusted padding
-        borderRadius: 5,
-        fontSize: 16,
-        color: '#000000',
-        borderColor: '#D3D3D3',
-        borderWidth: 1,
-    },
-    mobileInputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        height: 45, // Further reduced height
-        marginBottom: 15, // Adjusted margin
-        borderColor: '#D3D3D3',
-        borderWidth: 1,
-        borderRadius: 5,
-        backgroundColor: '#F2F2F2',
-    },
-    countryCodeContainer: {
-        paddingHorizontal: 8, // Further reduced padding
-        borderRightWidth: 1,
-        borderColor: '#D3D3D3',
-        height: '100%',
-        justifyContent: 'center',
-        width: 50, // Further reduced width
-    },
-    countryCode: {
-        fontSize: 14, // Further reduced font
-        color: '#000000',
-        textAlign: 'center',
-    },
-    mobileInput: {
-        flex: 1,
-        paddingVertical: 8, // Further adjusted padding
-        fontSize: 16,
-        color: '#000000',
-        paddingLeft: 8, // Further reduced padding
-    },
-    button: {
-        width: '100%',
-        backgroundColor: '#000000',
-        padding: 14, // Adjusted padding
-        borderRadius: 5,
-        alignItems: 'center',
-        marginTop: 20,
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 18, // Adjusted font
-        fontWeight: 'bold',
-    },
-    forgotPasswordButton: {
-        marginTop: 20, // Adjusted margin
-    },
-    forgotPasswordText: {
-        color: '#808080',
-        fontSize: 14, // Adjusted font
-    },
-    signupContainer: {
-        flexDirection: 'row',
-        marginTop: 25, // Adjusted margin
-    },
-    signupText: {
-        fontSize: 14, // Adjusted font
-        color: '#000000',
-    },
-    signupLink: {
-        fontSize: 14, // Adjusted font
-        color: '#000000',
-        fontWeight: 'bold',
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 30,
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 14,
+    color: '#000000',
+    marginBottom: 8,
+    alignSelf: 'flex-start',
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#F2F2F2',
+    padding: Platform.OS === 'ios' ? 14 : 12,
+    borderRadius: 5,
+    fontSize: 16,
+    color: '#000000',
+    borderWidth: 1,
+    borderColor: '#D3D3D3',
+    marginBottom: 20,
+  },
+  button: {
+    width: '100%',
+    backgroundColor: '#000000',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  loader: {
+    marginTop: 20,
+  },
+  forgotPasswordButton: {
+    marginTop: 15,
+    alignSelf: 'center',
+  },
+  forgotPasswordText: {
+    color: '#808080',
+    fontSize: 14,
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    marginTop: 25,
+    justifyContent: 'center',
+  },
+  signupText: {
+    fontSize: 14,
+    color: '#000000',
+  },
+  signupLink: {
+    fontSize: 14,
+    color: '#000000',
+    fontWeight: 'bold',
+  },
 });
 
 export default LoginScreen;

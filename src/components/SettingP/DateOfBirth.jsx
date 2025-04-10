@@ -1,33 +1,37 @@
 import { useStore } from '@/src/store/Store';
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, ScrollView, TextInput } from 'react-native';
-
-const DatePicker = ({navigation}) => {
+import { ActivityIndicator } from 'react-native-paper';
+import { API_URL } from '../config';
+const DatePicker = ({ navigation }) => {
   const today = new Date();
+  const [isLoading, setIsLoading] = useState(false);
+  const { userId } = useStore();
+  const { token } = useStore();
   const [selectedDate, setSelectedDate] = useState(new Date(
-    Math.min(2005, today.getFullYear() - 1), 
-    2, 
+    Math.min(2005, today.getFullYear() - 1),
+    2,
     Math.min(9, today.getDate())
   ));
   const [currentMonth, setCurrentMonth] = useState(new Date(
-    Math.min(2005, today.getFullYear() - 1), 
-    2, 
+    Math.min(2005, today.getFullYear() - 1),
+    2,
     1
   ));
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [showDayPicker, setShowDayPicker] = useState(false);
   const [showYearPicker, setShowYearPicker] = useState(false);
 
-  const {age, setAge} = useStore();
+  const { age, setAge } = useStore();
   const [isAgeEditing, setIsAgeEditing] = useState(false);
-  
+
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
 
   // Generate years from 1900 to current year
   const currentYear = today.getFullYear();
-  const years = Array.from({length: currentYear - 1900 + 1}, (_, i) => currentYear - i);
+  const years = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
 
   // Calculate age whenever selectedDate changes
   useEffect(() => {
@@ -42,7 +46,7 @@ const DatePicker = ({navigation}) => {
   // Generate days based on current selected month and year
   const getDaysInSelectedMonth = () => {
     const days = daysInMonth(selectedDate.getMonth(), selectedDate.getFullYear());
-    return Array.from({length: days}, (_, i) => i + 1);
+    return Array.from({ length: days }, (_, i) => i + 1);
   };
 
   const daysInMonth = (month, year) => {
@@ -89,7 +93,7 @@ const DatePicker = ({navigation}) => {
     // When selecting month, make sure we don't go beyond current month in current year
     const year = selectedDate.getFullYear();
     let newDate;
-    
+
     if (year === currentYear && monthIndex > today.getMonth()) {
       // If selecting future month in current year, default to current month
       newDate = new Date(year, today.getMonth(), Math.min(selectedDate.getDate(), today.getDate()));
@@ -98,7 +102,7 @@ const DatePicker = ({navigation}) => {
       newDate = new Date(year, monthIndex, Math.min(selectedDate.getDate(), daysInMonth(monthIndex, year)));
       setCurrentMonth(new Date(year, monthIndex, 1));
     }
-    
+
     setSelectedDate(newDate);
     setShowMonthPicker(false);
   };
@@ -114,7 +118,7 @@ const DatePicker = ({navigation}) => {
     const month = selectedDate.getMonth();
     const daysInNewMonth = daysInMonth(month, year);
     let day = Math.min(selectedDate.getDate(), daysInNewMonth);
-    
+
     // If selecting current year, make sure we don't go beyond current month/day
     if (year === currentYear) {
       if (month > today.getMonth()) {
@@ -138,7 +142,7 @@ const DatePicker = ({navigation}) => {
       setSelectedDate(newDate);
       setCurrentMonth(new Date(year, month, 1));
     }
-    
+
     setShowYearPicker(false);
   };
 
@@ -165,18 +169,18 @@ const DatePicker = ({navigation}) => {
   const calculateAge = (birthDate) => {
     const today = new Date();
     const birthDateObj = new Date(birthDate);
-    
+
     if (birthDateObj > today) {
       return "Selected date is in the future";
     }
-    
+
     let age = today.getFullYear() - birthDateObj.getFullYear();
     const monthDiff = today.getMonth() - birthDateObj.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
       age--;
     }
-    
+
     return age;
   };
 
@@ -193,32 +197,55 @@ const DatePicker = ({navigation}) => {
         const today = new Date();
         const birthYear = today.getFullYear() - ageNum;
         const newDate = new Date(birthYear, selectedDate.getMonth(), selectedDate.getDate());
-        
+
         // Check if the new date is in the future (birthday hasn't occurred yet this year)
         if (newDate > today) {
           newDate.setFullYear(birthYear - 1);
         }
-        
+
         setSelectedDate(newDate);
         setCurrentMonth(new Date(newDate.getFullYear(), newDate.getMonth(), 1));
       }
     }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
+    if (userId != 0) {
+
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${API_URL}/api/update-age/`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: userId,
+            age: age,
+          }),
+        });
+
+      } catch (error) {
+        console.error('Login error:', error);
+        Alert.alert('Error', error.message || 'Network error. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
     console.log(`Selected date: ${formatDate(selectedDate)}`);
     console.log(`Age: ${age}`);
     navigation.goBack();
   };
 
   const daysArray = getDaysArray();
-  const isCurrentMonth = currentMonth.getFullYear() === today.getFullYear() && 
-                        currentMonth.getMonth() === today.getMonth();
+  const isCurrentMonth = currentMonth.getFullYear() === today.getFullYear() &&
+    currentMonth.getMonth() === today.getMonth();
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select your date of birth</Text>
-      
+
       {/* Age Display/Edit Field */}
       <View style={styles.ageContainer}>
         <Text style={styles.ageLabel}>Age:</Text>
@@ -234,15 +261,15 @@ const DatePicker = ({navigation}) => {
             autoFocus
           />
         ) : (
-          <TouchableOpacity 
-            style={styles.ageDisplay} 
+          <TouchableOpacity
+            style={styles.ageDisplay}
             onPress={() => setIsAgeEditing(true)}
           >
             <Text style={styles.ageText}>{age || 'Tap to enter age'}</Text>
           </TouchableOpacity>
         )}
       </View>
-      
+
       {/* Date display with dropdown triggers */}
       <View style={styles.dateDisplayContainer}>
         <TouchableOpacity onPress={() => setShowMonthPicker(true)}>
@@ -269,8 +296,8 @@ const DatePicker = ({navigation}) => {
                 // Disable future months in current year
                 const isFutureMonth = selectedDate.getFullYear() === currentYear && index > today.getMonth();
                 return (
-                  <TouchableOpacity 
-                    key={month} 
+                  <TouchableOpacity
+                    key={month}
                     style={[styles.pickerItem, isFutureMonth && styles.disabledPickerItem]}
                     onPress={() => !isFutureMonth && handleMonthSelect(index)}
                     disabled={isFutureMonth}
@@ -282,7 +309,7 @@ const DatePicker = ({navigation}) => {
                 );
               })}
             </ScrollView>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setShowMonthPicker(false)}
             >
@@ -299,12 +326,12 @@ const DatePicker = ({navigation}) => {
             <ScrollView>
               {getDaysInSelectedMonth().map((day) => {
                 // Disable future days in current month/year
-                const isFutureDay = selectedDate.getFullYear() === currentYear && 
-                                  selectedDate.getMonth() === today.getMonth() && 
-                                  day > today.getDate();
+                const isFutureDay = selectedDate.getFullYear() === currentYear &&
+                  selectedDate.getMonth() === today.getMonth() &&
+                  day > today.getDate();
                 return (
-                  <TouchableOpacity 
-                    key={day} 
+                  <TouchableOpacity
+                    key={day}
                     style={[styles.pickerItem, isFutureDay && styles.disabledPickerItem]}
                     onPress={() => !isFutureDay && handleDaySelect(day)}
                     disabled={isFutureDay}
@@ -316,7 +343,7 @@ const DatePicker = ({navigation}) => {
                 );
               })}
             </ScrollView>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setShowDayPicker(false)}
             >
@@ -332,8 +359,8 @@ const DatePicker = ({navigation}) => {
           <View style={styles.pickerContainer}>
             <ScrollView>
               {years.map((year) => (
-                <TouchableOpacity 
-                  key={year} 
+                <TouchableOpacity
+                  key={year}
                   style={styles.pickerItem}
                   onPress={() => handleYearSelect(year)}
                 >
@@ -341,7 +368,7 @@ const DatePicker = ({navigation}) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.closeButton}
               onPress={() => setShowYearPicker(false)}
             >
@@ -360,7 +387,7 @@ const DatePicker = ({navigation}) => {
           <TouchableOpacity onPress={goToPreviousMonth}>
             <Text style={styles.arrow}>&lt;</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={goToNextMonth}
             disabled={isCurrentMonth}
           >
@@ -382,8 +409,8 @@ const DatePicker = ({navigation}) => {
             style={[
               styles.dayContainer,
               day === selectedDate.getDate() &&
-              currentMonth.getMonth() === selectedDate.getMonth() &&
-              currentMonth.getFullYear() === selectedDate.getFullYear()
+                currentMonth.getMonth() === selectedDate.getMonth() &&
+                currentMonth.getFullYear() === selectedDate.getFullYear()
                 ? styles.selectedDayContainer
                 : null,
               !day ? styles.disabledDayContainer : null,
@@ -395,8 +422,8 @@ const DatePicker = ({navigation}) => {
               style={[
                 styles.day,
                 day === selectedDate.getDate() &&
-                currentMonth.getMonth() === selectedDate.getMonth() &&
-                currentMonth.getFullYear() === selectedDate.getFullYear()
+                  currentMonth.getMonth() === selectedDate.getMonth() &&
+                  currentMonth.getFullYear() === selectedDate.getFullYear()
                   ? styles.selectedDay
                   : null,
                 !day ? styles.disabledDay : null,
@@ -408,9 +435,12 @@ const DatePicker = ({navigation}) => {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
-        <Text style={styles.updateButtonText}>Update</Text>
-      </TouchableOpacity>
+      {isLoading ? (
+        <ActivityIndicator style={styles.loader} color="#000000" size="large" />
+      ) : (
+        <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
+          <Text style={styles.updateButtonText}>Update</Text>
+        </TouchableOpacity>)}
     </View>
   );
 };

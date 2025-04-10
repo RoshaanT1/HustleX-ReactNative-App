@@ -1,31 +1,33 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { 
-  View, 
-  StyleSheet, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  Platform, 
-  KeyboardAvoidingView, 
-  ScrollView,
-  ActivityIndicator,
-  Alert
+import {
+    View,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Platform,
+    KeyboardAvoidingView,
+    ScrollView,
+    ActivityIndicator,
+    Alert
 } from 'react-native';
 import Gender from './SettingP/Gender';
 import { useStore } from '../store/Store';
+import { API_URL } from './config';
 
 const Signup2 = ({ navigation }) => {
-    const [email, setEmail] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const { email, setEmail } = useStore();
     const { password, setPassword } = useStore();
     const { age, setAge } = useStore();
     const { gender, setGender } = useStore();
     const { name, setName } = useStore();
-    const [isLoading, setIsLoading] = useState(false);
     const { phoneNumber, setPhoneNumber } = useStore();
     const { city, setCity } = useStore();
+    const { userId, setUserId } = useStore();
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,27 +44,26 @@ const Signup2 = ({ navigation }) => {
             setError('Please enter a valid email address.');
             return;
         }
-    
+
         if (!validatePassword(password)) {
             setError('Password must be at least 6 characters long.');
             return;
         }
-    
+
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
-    
+
         if (!name) {
             setError('Please enter your full name.');
             return;
         }
-    
+
         setError('');
         setIsLoading(true);
-    
+
         try {
-            // Prepare request body to exactly match Postman format
             const requestBody = {
                 email: email,
                 password: password,
@@ -74,23 +75,24 @@ const Signup2 = ({ navigation }) => {
                 city: city,
                 address: "" // Default address if not specified
             };
-    
-            console.log("Sending:", requestBody); // For debugging
-    
-            const response = await fetch('https://02bd-202-47-41-20.ngrok-free.app/api/signup/', {
+
+            console.log("Sending:", requestBody, API_URL); // For debugging
+
+            const response = await fetch(`${API_URL}/api/signup/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(requestBody),
             });
-    
+
             const data = await response.json();
-    
+            // setUserId(data.user.user_id);
+            console.log(data)
             if (!response.ok) {
                 throw new Error(data.message || 'Signup failed');
             }
-    
+
             Alert.alert('Success', 'Account created successfully!');
             navigation.navigate('Main');
         } catch (error) {
@@ -146,8 +148,8 @@ const Signup2 = ({ navigation }) => {
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                 {/* Signup Button */}
-                <TouchableOpacity 
-                    style={styles.button} 
+                <TouchableOpacity
+                    style={styles.button}
                     onPress={handleSignup}
                     disabled={isLoading}
                 >

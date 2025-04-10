@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 
 type storeType = {
+    
+    userId: number;
+    setUserId: (newUser: number) => void;
     name: string;
     setName: (newName: string) => void;
     age: number;
@@ -10,11 +13,15 @@ type storeType = {
     gender: string;
     setGender: (newGender: string) => void;
     password: string;
-    setPassword: (newGender: string) => void;
+    setPassword: (newPassword: string) => void;
     city: string;
-    setCity: (newGender: string) => void;
+    setCity: (newCity: string) => void;
     phoneNumber: string;
-    setPhoneNumber: (newGender: string) => void;
+    setPhoneNumber: (newNumber: string) => void;
+    token: string;
+    setToken: (newToken: string) => void;
+    resetToken: string;
+    setResetToken: (newToken: string) => void;
 };
 
 export const useStore = create<storeType>((set) => ({
@@ -46,4 +53,16 @@ export const useStore = create<storeType>((set) => ({
     setPhoneNumber: (newphoneNumber) => set(() => ({
         phoneNumber: newphoneNumber,
     })),
+    userId:0,
+    setUserId: (newUser) => set(() => ({
+        userId: newUser,
+    })),
+    token: '',
+    setToken: (newToken) => set(() => ({
+        token: newToken,
+    })),
+    resetToken:'',
+    setResetToken: (newToken) => set(() => ({
+        resetToken: newToken,
+    }))
 }));
