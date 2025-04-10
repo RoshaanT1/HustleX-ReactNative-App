@@ -12,7 +12,7 @@ const ForgotPassword = ({ navigation }) => {
     const handleForgotPassword = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${API_URL}/api/reset-password/`, {
+            const response = await fetch(`${API_URL}/api/request-password-reset/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ const ForgotPassword = ({ navigation }) => {
                 }),
             });
             const data = await response.json();
-            setResetToken(data.resetCode)
+            setResetToken(data.resetCode.toString())
         } catch (error) {
             console.error('Login error:', error);
             Alert.alert('Error', error.message || 'Network error. Please try again.');
@@ -30,7 +30,7 @@ const ForgotPassword = ({ navigation }) => {
             setIsLoading(false);
         }
         console.log('Forgot password for:', email);
-        navigation.navigate('Login'); // Navigate back to login after sending reset link
+        navigation.navigate('ForgetPassword2'); // Navigate back to login after sending reset link
     }
 
 return (

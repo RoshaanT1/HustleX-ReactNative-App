@@ -13,12 +13,15 @@ import Gender from '../components/SettingP/Gender'
 import NavigationBar from '../components/NavigationBar';
 import Signup from '../components/Signup'
 import ForgotPassword from '../components/ForgetPassword';
+import ForgotPassword2 from '../components/ForgetPassword2';
+import ForgotPassword3 from '../components/ForgetPassword3';
 import Notification from '../components/Notification'
 import Order from '../components/Order'
 import OrderDetail from '../components/OrderDetail'
 import MenuRequest from '../components/MenuRequest'
 import Signup2 from '../components/Signup2';
 import FirstScreen from '../components/FirstScreen'
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -29,6 +32,23 @@ const App = () => {
             <Stack.Screen
                 name="Notification"
                 component={Notification}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="ForgetPassword2"
+                component={ForgotPassword2}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="ForgetPassword3"
+                component={ForgotPassword3}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+                name="ForgetPassword1"
+                component={ForgotPassword}
                 options={{ headerShown: false }}
             />
 
